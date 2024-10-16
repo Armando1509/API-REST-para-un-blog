@@ -24,15 +24,14 @@ app.use(cors())
 app.use(express.json());
 
 // Crear rutas
+const rutas_articulo = require("./rutas/articulo")
 
+// Cargo las rutas
+app.use("/api", rutas_articulo)
+
+// Rutas de prueba hardcodeadas
 app.get("/probando", (req, res) =>{
-
-    /* return res.status(200).send(`
-            <div>
-                <h1>Probando ruta nodejs</h1>
-                <p>Creando api rest con node</p>
-            </div>
-        `) */
+    
     return res.status(200).json([{
         nombre: "conde",
         edad: 35,
