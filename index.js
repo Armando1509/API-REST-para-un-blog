@@ -21,7 +21,8 @@ app.use(cors())
 
 // Convertir body a objeto js
 
-app.use(express.json());
+app.use(express.json());// recibir datos con content-type app/json
+app.use(express.urlencoded({extended:true}))
 
 // Crear rutas
 const rutas_articulo = require("./rutas/articulo")
@@ -31,7 +32,7 @@ app.use("/api", rutas_articulo)
 
 // Rutas de prueba hardcodeadas
 app.get("/probando", (req, res) =>{
-    
+
     return res.status(200).json([{
         nombre: "conde",
         edad: 35,
