@@ -1,4 +1,6 @@
 const validator = require("validator");
+const Articulo = require("../modelos/Articulo");
+//const { save } = require("mongoose")
 
 const prueba = (req, res) => {
   return res.status(200).json({
@@ -21,7 +23,7 @@ const curso = (req, res) => {
   ]);
 };
 
-const crear = (req, res) => {
+const crear = async (req, res) =>  {
   // Recoger parametros por post a guardar
   let parametro = req.body;
 
@@ -43,19 +45,54 @@ const crear = (req, res) => {
   }
 
   // Crear el objeto a guardar
+  const articulo = new Articulo(parametro); //metodo automatico pasa los parametros comprando con la tabla
 
   // Asignar valores a objeto basado en el modelo (manual o automatico)
+  // articulo.titulo = parametro.titulo => esta es la manera manual pero si tienes muchos campos tienes que hacer uno por cada uno
 
-  // Devolver el resultado
-
-  return res.status(200).json({
-    mensaje: "Accion Guardada",
-    parametro,
-  });
+  // Guardar el articulo en la base de datos
+  try {
+    const articuloGuardado = await articulo.save();
+    //  DEVOLVER RESULTADO
+    return res.status(200).json({
+        status: "success",
+        articulo: articuloGuardado,
+        mensaje: "Artículo creado con éxito!"
+    });
+} catch (error) {
+    return res.status(400).json({
+        status: "error",
+        mensaje: "No se ha guardado el artículo"
+    });
 };
+
+}
+
+const conseguirArticulos = async (res, req) =>{
+    let parametro = req.body;
+    const articulo = new Articulo(parametro)
+    try {
+     
+        const consulta = await articulo.find()
+        return res.status(200).json({
+            status: "success",
+            articulo: consulta,
+            mensaje: "Aqui tienes la base"
+        })
+        
+    } catch (error) {
+        return res. status(400).json({
+            status: "error",
+            mensaje: "No pude traer la informacion"
+        })
+    }
+}
+
+
 
 module.exports = {
   prueba,
   curso,
   crear,
+  conseguirArticulos
 };
