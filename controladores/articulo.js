@@ -141,10 +141,29 @@ const ultimos = async (req, res) => {
             mensaje: "no conecta esta ma"
         })
     }
+  }
 
-    //Si no existe devolver error
-
-    //Devolver el resultado
+  const eliminar = async (req, res) =>{
+    let id = req.params.id
+    try {
+      let articulo = await Articulo.findByIdAndDelete(id)
+      if(articulo.length === 0){
+        return res.status(400).json({
+          status: "error",
+          mensaje: "No se encontro el articulo"
+        })
+      }
+      return res.status(200).json({
+        status: "Sccess",
+        articulo: articulo,
+        mensaje: "Se elimino de la base de datos"
+      })
+    } catch (error) {
+      return res.status(404).json({
+        status: "no hay conexion",
+        mensaje: "no hay conexion con la base de datos"
+      })
+    }
   }
 
 module.exports = {
@@ -153,5 +172,6 @@ module.exports = {
   crear,
   listar,
   ultimos,
-  uno
+  uno,
+  eliminar
 };
