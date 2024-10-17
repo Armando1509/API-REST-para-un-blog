@@ -13,5 +13,6 @@ router.get("/curso", ArticuloControlador.curso)
 router.post("/crear", ArticuloControlador.crear)
 router.get("/conseguir/", ArticuloControlador.listar)
 router.get("/ultimos", ArticuloControlador.ultimos)
+router.get("/articulo/:id", ArticuloControlador.uno)
 
 module.exports = router

@@ -117,10 +117,41 @@ const ultimos = async (req, res) => {
     }
   };
 
+  const uno = async (req,res) =>{
+    //Recoger un id por la url
+    let id = req.params.id;
+
+    //Buscar el articulo
+    try {
+        let articulo = await Articulo.findById(id)
+        if(articulo.length === 0){
+            return res.status(400).json({
+                status: "error",
+                mensaje: "No se encontro el id"
+            })
+        }
+        return res.status(200).json({
+            status: "success",
+            articulo: articulo,
+            mensaje: "Aqui esta el articulo"
+        })
+    } catch (error) {
+        return res.status(404).json({
+            status: "estas cabron",
+            mensaje: "no conecta esta ma"
+        })
+    }
+
+    //Si no existe devolver error
+
+    //Devolver el resultado
+  }
+
 module.exports = {
   prueba,
   curso,
   crear,
   listar,
-  ultimos
+  ultimos,
+  uno
 };
