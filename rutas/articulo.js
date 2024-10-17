@@ -11,5 +11,6 @@ router.get("/curso", ArticuloControlador.curso)
 // Rutas util
 
 router.post("/crear", ArticuloControlador.crear)
+router.get("/conseguirArticulos", ArticuloControlador.conseguirArticulos)
 
 module.exports = router

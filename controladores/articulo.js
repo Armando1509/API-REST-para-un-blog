@@ -68,12 +68,19 @@ const crear = async (req, res) =>  {
 
 }
 
-const conseguirArticulos = async (res, req) =>{
-    let parametro = req.body;
-    const articulo = new Articulo(parametro)
+const conseguirArticulos = async (req, res) =>{
+    
+    
+
     try {
      
-        const consulta = await articulo.find()
+        const consulta = await Articulo.find()
+        if(consulta.length === 0 ){
+            return res. status(400).json({
+                status: "error",
+                mensaje: "No Hay informacion"
+            })
+        }
         return res.status(200).json({
             status: "success",
             articulo: consulta,
@@ -81,9 +88,9 @@ const conseguirArticulos = async (res, req) =>{
         })
         
     } catch (error) {
-        return res. status(400).json({
+        return res. status(404).json({
             status: "error",
-            mensaje: "No pude traer la informacion"
+            mensaje: "No hay conexion"
         })
     }
 }
