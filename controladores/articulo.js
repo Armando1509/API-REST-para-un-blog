@@ -23,7 +23,7 @@ const curso = (req, res) => {
   ]);
 };
 
-const crear = async (req, res) =>  {
+const crear = async (req, res) => {
   // Recoger parametros por post a guardar
   let parametro = req.body;
 
@@ -55,51 +55,72 @@ const crear = async (req, res) =>  {
     const articuloGuardado = await articulo.save();
     //  DEVOLVER RESULTADO
     return res.status(200).json({
-        status: "success",
-        articulo: articuloGuardado,
-        mensaje: "Artículo creado con éxito!"
+      status: "success",
+      articulo: articuloGuardado,
+      mensaje: "Artículo creado con éxito!",
     });
-} catch (error) {
+  } catch (error) {
     return res.status(400).json({
-        status: "error",
-        mensaje: "No se ha guardado el artículo"
+      status: "error",
+      mensaje: "No se ha guardado el artículo",
     });
+  }
 };
 
-}
+const listar = async (req, res) => {
+  try {
+    let consulta = await Articulo.find().sort({ fecha: -1 });
 
-const conseguirArticulos = async (req, res) =>{
-    
-    
-
-    try {
-     
-        const consulta = await Articulo.find()
-        if(consulta.length === 0 ){
-            return res. status(400).json({
-                status: "error",
-                mensaje: "No Hay informacion"
-            })
-        }
-        return res.status(200).json({
-            status: "success",
-            articulo: consulta,
-            mensaje: "Aqui tienes la base"
-        })
-        
-    } catch (error) {
-        return res. status(404).json({
-            status: "error",
-            mensaje: "No hay conexion"
-        })
+    if (consulta.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        mensaje: "No Hay informacion",
+      });
     }
-}
+    return res.status(200).json({
+      contador: consulta.length,
+      parametro: req.params.ultimos,
+      status: "success",
+      articulo: consulta,
+      mensaje: "Aqui tienes la base",
+    });
+  } catch (error) {
+    return res.status(404).json({
+      status: "error",
+      mensaje: "No hay conexion",
+    });
+  }
+};
 
-
+const ultimos = async (req, res) => {
+    try {
+      let consulta = await Articulo.find().sort({ fecha: -1 }).limit(3);
+  
+      if (consulta.length === 0) {
+        return res.status(400).json({
+          status: "error",
+          mensaje: "No Hay informacion",
+        });
+      }
+      return res.status(200).json({
+        contador: consulta.length,
+        parametro: req.params.ultimos,
+        status: "success",
+        articulo: consulta,
+        mensaje: "Aqui tienes la base",
+      });
+    } catch (error) {
+      return res.status(404).json({
+        status: "error",
+        mensaje: "No hay conexion",
+      });
+    }
+  };
 
 module.exports = {
   prueba,
   curso,
   crear,
-  conseguirArticulos
+  listar,
+  ultimos
 };
