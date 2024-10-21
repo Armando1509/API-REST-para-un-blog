@@ -1,3 +1,4 @@
+const fs = require("fs")
 const validator = require("validator");
 const Articulo = require("../modelos/Articulo");
 const {validarArticulo} = require("../helper/validar")
@@ -196,6 +197,48 @@ const ultimos = async (req, res) => {
     }
   }
 
+  const subir = async (req, res) =>{
+    // Configurar multer en rutas
+
+    // Recoger el fichero de imagen subido
+    if(!req.file && !req.files){
+      return res.status(404).json({
+        status: "Error",
+        mensaje: "No subiste imagen"
+      })
+    }
+    
+    // Nombre del archivo
+    let archivo = req.file.originalname
+    // Extension del archivo
+     let archivo_split = archivo.split("\.")
+     let extension = archivo_split[1]
+
+     // Comprobar si la extension es correcta
+     if( extension != "png" && extension != "jpg" && extension != "jpeg" && extension != "gif"){
+      // Borrar archivo y dar respuesta
+      fs.unlink(req.file.path, (error) => {
+        return res.status(400).json({
+          status: "error",
+          mensaje: "Imagen invalida"
+        })
+      })
+     }else{
+      // Si todo va bien, actualizar el archivo
+
+      // Devolver respuesta
+      return res.status(200).json({
+        archivo_split, 
+       extension,
+       status: "success todo chido",
+       files: req.file
+     })
+
+     }
+ 
+    
+  }
+
 module.exports = {
   prueba,
   curso,
@@ -204,5 +247,6 @@ module.exports = {
   ultimos,
   uno,
   eliminar,
-  editar
+  editar,
+  subir
 };
