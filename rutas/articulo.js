@@ -15,5 +15,6 @@ router.get("/conseguir/", ArticuloControlador.listar)
 router.get("/ultimos", ArticuloControlador.ultimos)
 router.get("/articulo/:id", ArticuloControlador.uno)
 router.delete("/eliminar/:id", ArticuloControlador.eliminar)
+router.put("/editar/:id", ArticuloControlador.editar)
 
 module.exports = router

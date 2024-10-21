@@ -123,7 +123,7 @@ const ultimos = async (req, res) => {
 
     //Buscar el articulo
     try {
-        let articulo = await Articulo.findById(id)
+        let articulo = await Articulo.findById({_id: id})
         if(articulo.length === 0){
             return res.status(400).json({
                 status: "error",
@@ -146,7 +146,7 @@ const ultimos = async (req, res) => {
   const eliminar = async (req, res) =>{
     let id = req.params.id
     try {
-      let articulo = await Articulo.findByIdAndDelete(id)
+      let articulo = await Articulo.findByIdAndDelete({_id: id})
       if(articulo.length === 0){
         return res.status(400).json({
           status: "error",
@@ -166,6 +166,49 @@ const ultimos = async (req, res) => {
     }
   }
 
+  const editar = async (req, res) =>{
+    // Recoger id de articulo a editar
+    let id = req.params.id
+    // Recoger datos del articulo del body
+    let parametro = req.body
+     // Validar datos
+  try {
+    let validar_titulo =
+      !validator.isEmpty(parametro.titulo) &&
+      validator.isLength(parametro.titulo, { min: 5, max: undefined });
+    let validar_contenido = !validator.isEmpty(parametro.contenido);
+
+    if (!validar_contenido || !validar_titulo) {
+      throw new Error("No se ha validado la informacion");
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      mensaje: "Faltan datos por enviar",
+    });
+  }
+    // Buscar y actualizar el articulo
+    try {
+      let articulo = await Articulo.findOneAndUpdate({_id: id}, parametro, {new: true})
+      if(articulo.length === 0){
+        return res.status(400).json({
+          status: "error",
+          mensaje: "No se encontro el articulo"
+        })
+      }
+      return res.status(200).json({
+        status: "Success",
+        articulo: articulo,
+        mensaje: "Se Actualizo el articulo de la base de datos"
+      })
+    } catch (error) {
+      return res.status(404).json({
+        status: "no hay conexion",
+        mensaje: "no hay conexion con la base de datos"
+      })
+    }
+  }
+
 module.exports = {
   prueba,
   curso,
@@ -173,5 +216,6 @@ module.exports = {
   listar,
   ultimos,
   uno,
-  eliminar
+  eliminar,
+  editar
 };
