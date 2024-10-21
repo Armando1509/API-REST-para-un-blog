@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const validator = require("validator");
 const Articulo = require("../modelos/Articulo");
 const { validarArticulo } = require("../helper/validar");
@@ -237,7 +238,7 @@ const subir = async (req, res) => {
     try {
       let articulo = await Articulo.findOneAndUpdate(
         { _id: id },
-        { imagen: req.file.filename },//aqio solo agrego el parametro de la imagen ya obtenido arriba
+        { imagen: req.file.filename }, //aqio solo agrego el parametro de la imagen ya obtenido arriba
         { new: true }
       );
       if (articulo.length === 0) {
@@ -250,7 +251,7 @@ const subir = async (req, res) => {
         status: "Success",
         articulo: articulo,
         mensaje: "Se Actualizo el articulo de la base de datos",
-        fichero: req.file
+        fichero: req.file,
       });
     } catch (error) {
       return res.status(404).json({
@@ -261,9 +262,55 @@ const subir = async (req, res) => {
   }
 };
 
-const imagen = async (req, res) =>{
+const imagen = (req, res) => {
+  let fichero = req.params.fichero;
+  let ruta_fisica = path.join(__dirname, "../imagenes/articulos", fichero);
 
-}
+  fs.stat(ruta_fisica, fs.constants.F_OK, (error, existe) => {
+    if (existe) {
+      return res.sendFile(path.resolve(ruta_fisica));
+    } else {
+      return res.status(404).json({
+        status: "error",
+        mensaje: "La imagen no existe",
+        existe,
+        fichero,
+        ruta_fisica,
+      });
+    }
+  });
+};
+
+const buscar = async (req, res) => {
+  // Sacar el string de busqueda
+  let busqueda = req.params.busqueda;
+  // Find OR
+  try {
+    let articulosEncontrados = await Articulo.find({
+      $or: [
+        { titulo: { $regex: busqueda, $options: "i" } },
+        { contenido: { $regex: busqueda, $options: "i" } },
+      ],
+    }).sort({ fecha: -1 });
+
+    if (!articulosEncontrados || articulosEncontrados.length <= 0) {
+      return res.status(400).json({
+        status: "error",
+        mensaje: "No se encontraron articulos",
+      });
+    } else {
+      return res.status(200).json({
+        status: "success",
+        articulos: articulosEncontrados,
+      });
+    }
+  } catch (error) {
+    return res.status(404).json({
+      status: "error",
+      mensaje: "No hay conexion",
+    });
+  }
+};
 
 module.exports = {
   prueba,
@@ -275,5 +322,6 @@ module.exports = {
   eliminar,
   editar,
   subir,
-  imagen
+  imagen,
+  buscar,
 };
