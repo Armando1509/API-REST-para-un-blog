@@ -1,6 +1,7 @@
 const validator = require("validator");
 const Articulo = require("../modelos/Articulo");
-//const { save } = require("mongoose")
+const {validarArticulo} = require("../helper/validar")
+
 
 const prueba = (req, res) => {
   return res.status(200).json({
@@ -29,14 +30,7 @@ const crear = async (req, res) => {
 
   // Validar datos
   try {
-    let validar_titulo =
-      !validator.isEmpty(parametro.titulo) &&
-      validator.isLength(parametro.titulo, { min: 5, max: undefined });
-    let validar_contenido = !validator.isEmpty(parametro.contenido);
-
-    if (!validar_contenido || !validar_titulo) {
-      throw new Error("No se ha validado la informacion");
-    }
+    validarArticulo(parametro)
   } catch (error) {
     return res.status(400).json({
       status: "error",
@@ -173,14 +167,7 @@ const ultimos = async (req, res) => {
     let parametro = req.body
      // Validar datos
   try {
-    let validar_titulo =
-      !validator.isEmpty(parametro.titulo) &&
-      validator.isLength(parametro.titulo, { min: 5, max: undefined });
-    let validar_contenido = !validator.isEmpty(parametro.contenido);
-
-    if (!validar_contenido || !validar_titulo) {
-      throw new Error("No se ha validado la informacion");
-    }
+    validarArticulo(parametro)
   } catch (error) {
     return res.status(400).json({
       status: "error",
