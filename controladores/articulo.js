@@ -288,8 +288,9 @@ const buscar = async (req, res) => {
   try {
     let articulosEncontrados = await Articulo.find({
       $or: [
-        { titulo: { $regex: busqueda, $options: "i" } },
-        { contenido: { $regex: busqueda, $options: "i" } },
+        //significa buscar coincidencias dentro del array siguien esto de mongo
+        { titulo: { $regex: busqueda, $options: "i" } }, // regex es es para que busque en el campo de titulo la palabra mandada por busqueda
+        { contenido: { $regex: busqueda, $options: "i" } }, // options es la expresion que indica que no importa si son mayusculas o minusculas por eso la i ya que no distingue entre ellas
       ],
     }).sort({ fecha: -1 });
 
